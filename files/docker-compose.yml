@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # NutriAI Backend
+  backend:
+    build: .
+    container_name: nutriai-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+    networks:
+      - nutriai-network
+
+  # Frontend (Nginx)
+  frontend:
+    image: nginx:alpine
+    container_name: nutriai-frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nutriai.html:/usr/share/nginx/html/index.html:ro
+      - ./api.js:/usr/share/nginx/html/api.js:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - nutriai-network
+
+  # Optional: PostgreSQL Database
+  # Uncomment when ready to use a real database
+  # database:
+  #   image: postgres:15-alpine
+  #   container_name: nutriai-database
+  #   environment:
+  #     POSTGRES_DB: nutriai
+  #     POSTGRES_USER: nutriai_user
+  #     POSTGRES_PASSWORD: your_secure_password
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   restart: unless-stopped
+  #   networks:
+  #     - nutriai-network
+
+  # Optional: MongoDB
+  # mongodb:
+  #   image: mongo:6
+  #   container_name: nutriai-mongodb
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin
+  #     MONGO_INITDB_ROOT_PASSWORD: your_secure_password
+  #     MONGO_INITDB_DATABASE: nutriai
+  #   volumes:
+  #     - mongodb-data:/data/db
+  #   ports:
+  #     - "27017:27017"
+  #   restart: unless-stopped
+  #   networks:
+  #     - nutriai-network
+
+  # Optional: Redis for caching
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: nutriai-redis
+  #   ports:
+  #     - "6379:6379"
+  #   restart: unless-stopped
+  #   networks:
+  #     - nutriai-network
+
+networks:
+  nutriai-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  mongodb-data:
