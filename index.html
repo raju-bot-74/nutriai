@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriAI - Your AI Nutrition & Fitness Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00D9A3;
+            --primary-dark: #00B388;
+            --secondary: #FF6B9D;
+            --accent: #FFD93D;
+            --dark: #0A0E27;
+            --dark-lighter: #1A1F3A;
+            --text: #E5E7EB;
+            --text-dim: #9CA3AF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --glass: rgba(26, 31, 58, 0.7);
+            --border: rgba(0, 217, 163, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0A0E27 0%, #1A1F3A 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 217, 163, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -250px;
+            right: -250px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 107, 157, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1400px;
+            margin: 4rem auto;
+            padding: 2rem;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            box-shadow: 0 10px 30px rgba(0, 217, 163, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 217, 163, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Styles */
+        .section {
+            margin: 4rem 0;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 217, 163, 0.1);
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            text-align: center;
+            padding: 2.5rem;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        .feature-card h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Calculator Section */
+        .calculator-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--dark-lighter);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 217, 163, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Upload Section */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--dark-lighter);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(0, 217, 163, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(0, 217, 163, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        #imagePreview {
+            max-width: 300px;
+            max-height: 300px;
+            margin: 1rem auto;
+            border-radius: 12px;
+            display: none;
+        }
+
+        /* Results Section */
+        .results {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .nutrition-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--dark-lighter);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .nutrition-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .nutrition-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .nutrition-label {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+        }
+
+        /* Daily Tip */
+        .daily-tip {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            color: var(--dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .daily-tip::before {
+            content: '💡';
+            position: absolute;
+            font-size: 10rem;
+            right: -2rem;
+            top: -3rem;
+            opacity: 0.1;
+        }
+
+        .daily-tip h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        /* AI Chat Section */
+        .chat-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chat-message.ai {
+            background: var(--dark-lighter);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem;
+            background: var(--dark-lighter);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+        }
+
+        /* Exercise Cards */
+        .exercise-card {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--dark-lighter);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .exercise-image {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .exercise-info {
+            flex: 1;
+        }
+
+        .exercise-info h4 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .exercise-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-badge {
+            background: var(--glass);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Progress Tracker */
+        .progress-container {
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: var(--dark-lighter);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            margin-top: 6rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .exercise-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-lighter);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">NutriAI</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#calculator">Calculator</a></li>
+                <li><a href="#scanner">Scanner</a></li>
+                <li><a href="#exercise">Exercise</a></li>
+                <li><a href="#ai-chat">AI Chat</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Transform Your Health<br>with AI-Powered Nutrition</h1>
+        <p>Track calories, scan food, calculate your BMR, get personalized meal plans, and chat with your AI nutrition coach - all in one beautiful app.</p>
+        <div class="cta-buttons">
+            <button class="btn btn-primary" onclick="scrollToSection('calculator')">Calculate BMR</button>
+            <button class="btn btn-secondary" onclick="scrollToSection('scanner')">Scan Food</button>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Daily Motivation -->
+        <div class="daily-tip">
+            <h3>💪 Today's Motivation</h3>
+            <p id="dailyMotivation">Loading your daily inspiration...</p>
+        </div>
+
+        <!-- Features Section -->
+        <section class="section">
+            <h2 class="section-title">Why Choose NutriAI?</h2>
+            <div class="grid">
+                <div class="card feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h3>AI Food Scanner</h3>
+                    <p>Snap a photo of your meal and instantly get detailed nutritional information powered by advanced AI.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">🧮</div>
+                    <h3>BMR Calculator</h3>
+                    <p>Calculate your Basal Metabolic Rate and get personalized daily calorie recommendations.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>AI Nutrition Coach</h3>
+                    <p>Ask questions about nutrition, diet, and health. Get expert advice 24/7 from your AI companion.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">🏋️</div>
+                    <h3>Exercise Library</h3>
+                    <p>Access hundreds of exercises with instructions, calories burned, and personalized workout plans.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your daily nutrition goals, track calories, and visualize your fitness journey.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">🍽️</div>
+                    <h3>Daily Food Tips</h3>
+                    <p>Discover new healthy foods daily with nutritional facts and delicious recipe suggestions.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- BMR Calculator Section -->
+        <section class="section" id="calculator">
+            <h2 class="section-title">BMR & Calorie Calculator</h2>
+            <div class="calculator-section">
+                <form id="bmrForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">Age (years)</label>
+                            <input type="number" id="age" required min="1" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" required>
+                                <option value="">Select...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="height">Height (cm)</label>
+                            <input type="number" id="height" required min="50" max="300">
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">Weight (kg)</label>
+                            <input type="number" id="weight" required min="20" max="300" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity">Activity Level</label>
+                        <select id="activity" required>
+                            <option value="">Select your activity level...</option>
+                            <option value="1.2">Sedentary (little or no exercise)</option>
+                            <option value="1.375">Lightly active (1-3 days/week)</option>
+                            <option value="1.55">Moderately active (3-5 days/week)</option>
+                            <option value="1.725">Very active (6-7 days/week)</option>
+                            <option value="1.9">Extremely active (athlete, 2x per day)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal">Goal</label>
+                        <select id="goal" required>
+                            <option value="">Select your goal...</option>
+                            <option value="lose">Lose weight (500 cal deficit)</option>
+                            <option value="maintain">Maintain weight</option>
+                            <option value="gain">Gain weight (500 cal surplus)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Calculate My Needs</button>
+                </form>
+
+                <div class="results" id="bmrResults">
+                    <h3 style="font-family: 'Syne', sans-serif; font-size: 1.8rem; margin-bottom: 1rem;">Your Results</h3>
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item">
+                            <span class="nutrition-value" id="bmrValue">0</span>
+                            <span class="nutrition-label">BMR (kcal/day)</span>
+                        </div>
+                        <div class="nutrition-item">
+                            <span class="nutrition-value" id="tdeeValue">0</span>
+                            <span class="nutrition-label">TDEE (kcal/day)</span>
+                        </div>
+                        <div class="nutrition-item">
+                            <span class="nutrition-value" id="targetCalories">0</span>
+                            <span class="nutrition-label">Target Calories</span>
+                        </div>
+                        <div class="nutrition-item">
+                            <span class="nutrition-value" id="proteinNeeds">0g</span>
+                            <span class="nutrition-label">Protein</span>
+                        </div>
+                        <div class="nutrition-item">
+                            <span class="nutrition-value" id="carbsNeeds">0g</span>
+                            <span class="nutrition-label">Carbs</span>
+                        </div>
+                        <div class="nutrition-item">
+                            <span class="nutrition-value" id="fatNeeds">0g</span>
+                            <span class="nutrition-label">Fat</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: var(--dark-lighter); border-radius: 12px;">
+                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Personalized Recommendations</h4>
+                        <p id="recommendations" style="color: var(--text-dim); line-height: 1.8;"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Food Scanner Section -->
+        <section class="section" id="scanner">
+            <h2 class="section-title">AI Food Scanner</h2>
+            <div class="card">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📸</div>
+                    <h3 style="font-family: 'Syne', sans-serif; margin-bottom: 0.5rem;">Upload Food Image</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 1rem;">Drag and drop or click to select</p>
+                    <input type="file" id="foodImage" accept="image/*" style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('foodImage').click()">Choose Image</button>
+                </div>
+                <img id="imagePreview" alt="Food preview">
+                <button id="analyzeBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem; display: none;">Analyze Food</button>
+
+                <div class="results" id="foodResults">
+                    <h3 style="font-family: 'Syne', sans-serif; font-size: 1.8rem; margin-bottom: 1rem;">Nutritional Analysis</h3>
+                    <div id="foodName" style="font-size: 1.3rem; color: var(--primary); margin-bottom: 1.5rem;"></div>
+                    <div class="nutrition-grid" id="nutritionGrid"></div>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: var(--dark-lighter); border-radius: 12px;">
+                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Health Benefits & Tips</h4>
+                        <p id="foodTips" style="color: var(--text-dim); line-height: 1.8;"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercise Section -->
+        <section class="section" id="exercise">
+            <h2 class="section-title">Exercise Library</h2>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('cardio')">Cardio</button>
+                <button class="tab" onclick="switchTab('strength')">Strength</button>
+                <button class="tab" onclick="switchTab('flexibility')">Flexibility</button>
+                <button class="tab" onclick="switchTab('custom')">Custom Workout</button>
+            </div>
+
+            <div id="cardio" class="tab-content active">
+                <div class="grid">
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🏃</div>
+                        <div class="exercise-info">
+                            <h4>Running</h4>
+                            <p>Great cardiovascular exercise that burns calories and improves endurance.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">300-600 cal/hr</span>
+                                <span class="stat-badge">High Impact</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🚴</div>
+                        <div class="exercise-info">
+                            <h4>Cycling</h4>
+                            <p>Low-impact cardio excellent for building leg strength and stamina.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">250-500 cal/hr</span>
+                                <span class="stat-badge">Low Impact</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🏊</div>
+                        <div class="exercise-info">
+                            <h4>Swimming</h4>
+                            <p>Full-body workout that's easy on joints while building strength.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">400-700 cal/hr</span>
+                                <span class="stat-badge">Low Impact</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">⛹️</div>
+                        <div class="exercise-info">
+                            <h4>Jump Rope</h4>
+                            <p>High-intensity exercise that improves coordination and burns calories fast.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">600-1000 cal/hr</span>
+                                <span class="stat-badge">High Impact</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="strength" class="tab-content">
+                <div class="grid">
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🏋️</div>
+                        <div class="exercise-info">
+                            <h4>Weightlifting</h4>
+                            <p>Build muscle mass and increase strength with resistance training.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">200-400 cal/hr</span>
+                                <span class="stat-badge">Muscle Building</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">💪</div>
+                        <div class="exercise-info">
+                            <h4>Push-ups</h4>
+                            <p>Classic bodyweight exercise targeting chest, shoulders, and triceps.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">100-200 cal/hr</span>
+                                <span class="stat-badge">Bodyweight</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🦵</div>
+                        <div class="exercise-info">
+                            <h4>Squats</h4>
+                            <p>Essential lower body exercise for building leg and glute strength.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">150-300 cal/hr</span>
+                                <span class="stat-badge">Lower Body</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🤸</div>
+                        <div class="exercise-info">
+                            <h4>Planks</h4>
+                            <p>Core strengthening exercise that improves stability and posture.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">50-100 cal/hr</span>
+                                <span class="stat-badge">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="flexibility" class="tab-content">
+                <div class="grid">
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🧘</div>
+                        <div class="exercise-info">
+                            <h4>Yoga</h4>
+                            <p>Improve flexibility, balance, and mental wellness through flowing poses.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">100-250 cal/hr</span>
+                                <span class="stat-badge">Flexibility</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🤸‍♀️</div>
+                        <div class="exercise-info">
+                            <h4>Stretching</h4>
+                            <p>Essential for recovery, injury prevention, and maintaining mobility.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">50-100 cal/hr</span>
+                                <span class="stat-badge">Recovery</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🕉️</div>
+                        <div class="exercise-info">
+                            <h4>Pilates</h4>
+                            <p>Low-impact exercises focusing on core strength and flexibility.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">150-300 cal/hr</span>
+                                <span class="stat-badge">Core Focus</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card exercise-card">
+                        <div class="exercise-image">🧘‍♂️</div>
+                        <div class="exercise-info">
+                            <h4>Tai Chi</h4>
+                            <p>Gentle martial art that improves balance, flexibility, and reduces stress.</p>
+                            <div class="exercise-stats">
+                                <span class="stat-badge">100-200 cal/hr</span>
+                                <span class="stat-badge">Balance</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="custom" class="tab-content">
+                <div class="card">
+                    <h3 style="font-family: 'Syne', sans-serif; font-size: 1.5rem; margin-bottom: 1rem;">Create Custom Workout</h3>
+                    <div class="form-group">
+                        <label>Workout Goal</label>
+                        <select id="workoutGoal">
+                            <option>Weight Loss</option>
+                            <option>Muscle Building</option>
+                            <option>Endurance</option>
+                            <option>Flexibility</option>
+                            <option>General Fitness</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Duration (minutes)</label>
+                            <input type="number" id="workoutDuration" value="30" min="10" max="180">
+                        </div>
+                        <div class="form-group">
+                            <label>Intensity</label>
+                            <select id="workoutIntensity">
+                                <option>Low</option>
+                                <option>Moderate</option>
+                                <option>High</option>
+                                <option>Very High</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="generateWorkout()">Generate Workout Plan</button>
+                    <div id="customWorkoutPlan" style="margin-top: 2rem;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Chat Section -->
+        <section class="section" id="ai-chat">
+            <h2 class="section-title">AI Nutrition Coach</h2>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message ai">
+                        👋 Hello! I'm your AI nutrition coach. Ask me anything about nutrition, diet plans, healthy eating, weight management, or fitness!
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask me anything about nutrition and fitness..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Daily Food Info Section -->
+        <section class="section">
+            <h2 class="section-title">Food of the Day</h2>
+            <div class="card" style="padding: 3rem;">
+                <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                    <div style="font-size: 8rem; line-height: 1;">🥑</div>
+                    <div style="flex: 1; min-width: 300px;">
+                        <h3 id="foodOfDay" style="font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--primary); margin-bottom: 1rem;">Avocado</h3>
+                        <p id="foodDescription" style="margin-bottom: 1.5rem; line-height: 1.8;">Rich in healthy fats, fiber, and various vitamins. Avocados are nutrient-dense fruits that provide heart-healthy monounsaturated fats and can help improve cholesterol levels.</p>
+                        <div class="nutrition-grid">
+                            <div class="nutrition-item">
+                                <span class="nutrition-value">160</span>
+                                <span class="nutrition-label">Calories</span>
+                            </div>
+                            <div class="nutrition-item">
+                                <span class="nutrition-value">15g</span>
+                                <span class="nutrition-label">Healthy Fats</span>
+                            </div>
+                            <div class="nutrition-item">
+                                <span class="nutrition-value">7g</span>
+                                <span class="nutrition-label">Fiber</span>
+                            </div>
+                            <div class="nutrition-item">
+                                <span class="nutrition-value">2g</span>
+                                <span class="nutrition-label">Protein</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="logo" style="margin-bottom: 1rem;">NutriAI</div>
+        <p>Your AI-Powered Nutrition & Fitness Companion</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">© 2026 NutriAI. Transform your health with intelligent nutrition tracking.</p>
+    </footer>
+
+    <script>
+        // Daily motivational quotes
+        const motivationalQuotes = [
+            "Your body is a reflection of your lifestyle. Make it count! 💪",
+            "Small daily improvements lead to stunning results over time. 🌟",
+            "The only bad workout is the one that didn't happen. Keep moving! 🏃",
+            "Eat well, move daily, hydrate often, sleep well, and be kind to yourself. 💚",
+            "Progress, not perfection. Every healthy choice matters! 🎯",
+            "Your health is an investment, not an expense. Invest wisely! 💎",
+            "Consistency beats intensity. Show up every day! 📈",
+            "Food is fuel. Choose premium for peak performance! 🚀",
+            "Strong body, strong mind. Train both daily! 🧠💪",
+            "The best time to start was yesterday. The second best time is now! ⏰"
+        ];
+
+        // Food of the day data
+        const foodsOfDay = [
+            {
+                name: "Avocado",
+                emoji: "🥑",
+                description: "Rich in healthy fats, fiber, and various vitamins. Avocados are nutrient-dense fruits that provide heart-healthy monounsaturated fats and can help improve cholesterol levels.",
+                calories: 160,
+                fat: "15g",
+                fiber: "7g",
+                protein: "2g"
+            },
+            {
+                name: "Blueberries",
+                emoji: "🫐",
+                description: "Packed with antioxidants, particularly anthocyanins, which give them their blue color. Excellent for brain health and may help reduce DNA damage.",
+                calories: 84,
+                fat: "0.5g",
+                fiber: "4g",
+                protein: "1g"
+            },
+            {
+                name: "Salmon",
+                emoji: "🐟",
+                description: "Excellent source of omega-3 fatty acids, high-quality protein, and vitamin D. Supports heart health, brain function, and reduces inflammation.",
+                calories: 206,
+                fat: "13g",
+                fiber: "0g",
+                protein: "22g"
+            },
+            {
+                name: "Spinach",
+                emoji: "🥬",
+                description: "Loaded with iron, calcium, vitamins A, C, and K. A nutrient powerhouse that supports bone health, immunity, and eye health.",
+                calories: 23,
+                fat: "0.4g",
+                fiber: "2g",
+                protein: "3g"
+            },
+            {
+                name: "Almonds",
+                emoji: "🌰",
+                description: "Rich in healthy fats, fiber, protein, magnesium, and vitamin E. Great for heart health and may help with weight management.",
+                calories: 164,
+                fat: "14g",
+                fiber: "3.5g",
+                protein: "6g"
+            },
+            {
+                name: "Sweet Potato",
+                emoji: "🍠",
+                description: "High in fiber, vitamin A, and complex carbohydrates. Provides sustained energy and supports immune function and vision.",
+                calories: 86,
+                fat: "0.1g",
+                fiber: "3g",
+                protein: "2g"
+            },
+            {
+                name: "Greek Yogurt",
+                emoji: "🥛",
+                description: "Excellent source of protein, probiotics, and calcium. Supports gut health, bone strength, and muscle recovery.",
+                calories: 100,
+                fat: "4g",
+                fiber: "0g",
+                protein: "17g"
+            }
+        ];
+
+        // Initialize daily content
+        function initializeDailyContent() {
+            const today = new Date().getDate();
+            const quoteIndex = today % motivationalQuotes.length;
+            const foodIndex = today % foodsOfDay.length;
+
+            document.getElementById('dailyMotivation').textContent = motivationalQuotes[quoteIndex];
+
+            const food = foodsOfDay[foodIndex];
+            document.querySelector('.section .card div[style*="font-size: 8rem"]').textContent = food.emoji;
+            document.getElementById('foodOfDay').textContent = food.name;
+            document.getElementById('foodDescription').textContent = food.description;
+            
+            const nutritionItems = document.querySelectorAll('.section .card .nutrition-item');
+            nutritionItems[0].querySelector('.nutrition-value').textContent = food.calories;
+            nutritionItems[1].querySelector('.nutrition-value').textContent = food.fat;
+            nutritionItems[2].querySelector('.nutrition-value').textContent = food.fiber;
+            nutritionItems[3].querySelector('.nutrition-value').textContent = food.protein;
+        }
+
+        // BMR Calculator
+        document.getElementById('bmrForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const height = parseInt(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+
+            // Mifflin-St Jeor Equation
+            let bmr;
+            if (gender === 'male') {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            } else {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+            }
+
+            const tdee = bmr * activity;
+            let targetCalories = tdee;
+
+            if (goal === 'lose') {
+                targetCalories = tdee - 500;
+            } else if (goal === 'gain') {
+                targetCalories = tdee + 500;
+            }
+
+            // Macronutrient calculations (40% carbs, 30% protein, 30% fat)
+            const protein = Math.round((targetCalories * 0.30) / 4);
+            const carbs = Math.round((targetCalories * 0.40) / 4);
+            const fat = Math.round((targetCalories * 0.30) / 9);
+
+            // Display results
+            document.getElementById('bmrValue').textContent = Math.round(bmr);
+            document.getElementById('tdeeValue').textContent = Math.round(tdee);
+            document.getElementById('targetCalories').textContent = Math.round(targetCalories);
+            document.getElementById('proteinNeeds').textContent = protein + 'g';
+            document.getElementById('carbsNeeds').textContent = carbs + 'g';
+            document.getElementById('fatNeeds').textContent = fat + 'g';
+
+            // Personalized recommendations
+            let recommendations = `Based on your profile, you should consume approximately ${Math.round(targetCalories)} calories per day. `;
+            
+            if (goal === 'lose') {
+                recommendations += "For healthy weight loss, aim to lose 0.5-1 kg per week by maintaining this calorie deficit and combining it with regular exercise. Focus on protein-rich foods to preserve muscle mass.";
+            } else if (goal === 'gain') {
+                recommendations += "To gain weight healthily, ensure you're getting enough protein (aim for 1.6-2.2g per kg of body weight) and combine this calorie surplus with strength training for optimal muscle growth.";
+            } else {
+                recommendations += "To maintain your weight, focus on eating balanced meals with plenty of vegetables, lean proteins, and whole grains. Stay consistent with your daily calorie target.";
+            }
+
+            document.getElementById('recommendations').textContent = recommendations;
+            document.getElementById('bmrResults').classList.add('show');
+        });
+
+        // Food Image Upload and Analysis
+        const uploadArea = document.getElementById('uploadArea');
+        const foodImageInput = document.getElementById('foodImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        uploadArea.addEventListener('click', () => foodImageInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageUpload(file);
+            }
+        });
+
+        foodImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageUpload(file);
+            }
+        });
+
+        function handleImageUpload(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                analyzeBtn.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            const btn = analyzeBtn;
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="loading"></span> Analyzing...';
+            btn.disabled = true;
+
+            // Simulate AI analysis
+            setTimeout(() => {
+                // Sample food data (in real app, this would come from AI analysis)
+                const foodData = {
+                    name: "Mixed Salad Bowl",
+                    calories: 320,
+                    protein: "12g",
+                    carbs: "28g",
+                    fat: "18g",
+                    fiber: "8g",
+                    vitamins: "A, C, K",
+                    tips: "This is a nutrient-dense meal rich in vitamins and minerals. The combination of leafy greens, vegetables, and healthy fats makes it excellent for heart health. Consider adding a lean protein source like grilled chicken or tofu to make it more balanced. The fiber content will help keep you full for longer."
+                };
+
+                displayFoodResults(foodData);
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        });
+
+        function displayFoodResults(data) {
+            document.getElementById('foodName').textContent = `🍽️ ${data.name}`;
+            
+            const nutritionGrid = document.getElementById('nutritionGrid');
+            nutritionGrid.innerHTML = `
+                <div class="nutrition-item">
+                    <span class="nutrition-value">${data.calories}</span>
+                    <span class="nutrition-label">Calories</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-value">${data.protein}</span>
+                    <span class="nutrition-label">Protein</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-value">${data.carbs}</span>
+                    <span class="nutrition-label">Carbs</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-value">${data.fat}</span>
+                    <span class="nutrition-label">Fat</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-value">${data.fiber}</span>
+                    <span class="nutrition-label">Fiber</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-value">${data.vitamins}</span>
+                    <span class="nutrition-label">Vitamins</span>
+                </div>
+            `;
+
+            document.getElementById('foodTips').textContent = data.tips;
+            document.getElementById('foodResults').classList.add('show');
+        }
+
+        // AI Chat functionality
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.textContent = message;
+            chatMessages.appendChild(userMsg);
+            
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate AI response
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'chat-message ai';
+            aiMsg.innerHTML = '<span class="loading"></span> Thinking...';
+            chatMessages.appendChild(aiMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate delay and response
+            setTimeout(() => {
+                const response = getAIResponse(message);
+                aiMsg.textContent = response;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1500);
+        }
+
+        function getAIResponse(message) {
+            const lowerMsg = message.toLowerCase();
+            
+            if (lowerMsg.includes('protein')) {
+                return "🥚 Protein is essential for muscle growth and repair! Aim for 1.6-2.2g per kg of body weight if you're active. Great sources include: lean meats, fish, eggs, legumes, Greek yogurt, and tofu. Try to distribute your protein intake throughout the day for optimal muscle protein synthesis.";
+            } else if (lowerMsg.includes('weight loss') || lowerMsg.includes('lose weight')) {
+                return "🎯 For sustainable weight loss: Create a moderate calorie deficit (300-500 calories), eat plenty of protein to preserve muscle, stay hydrated, get 7-9 hours of sleep, and combine cardio with strength training. Aim to lose 0.5-1kg per week for healthy, sustainable results. Remember, consistency beats perfection!";
+            } else if (lowerMsg.includes('carb') || lowerMsg.includes('carbohydrate')) {
+                return "🍚 Carbs aren't the enemy! They're your body's preferred energy source. Focus on complex carbs like: whole grains, oats, sweet potatoes, quinoa, and fruits. These provide sustained energy and fiber. Time your carb intake around workouts for optimal performance and recovery.";
+            } else if (lowerMsg.includes('water') || lowerMsg.includes('hydrat')) {
+                return "💧 Hydration is crucial! Aim for at least 2-3 liters of water daily, more if you're active. Benefits include: better digestion, clearer skin, improved energy, enhanced exercise performance, and appetite regulation. Tip: Drink a glass of water before each meal!";
+            } else if (lowerMsg.includes('muscle') || lowerMsg.includes('gain')) {
+                return "💪 To build muscle: Eat in a slight calorie surplus (250-500 cal), consume 1.6-2.2g protein per kg bodyweight, lift weights 3-5x per week with progressive overload, get 7-9 hours of sleep, and stay consistent. Recovery is when muscles grow, so don't skip rest days!";
+            } else if (lowerMsg.includes('meal plan') || lowerMsg.includes('diet plan')) {
+                return "🍽️ A balanced meal plan should include: Protein at every meal, colorful vegetables, complex carbs, healthy fats, and plenty of water. Try meal prepping on Sundays! Sample day: Breakfast - oats with berries and nuts, Lunch - grilled chicken salad, Snack - Greek yogurt with fruit, Dinner - salmon with sweet potato and vegetables.";
+            } else if (lowerMsg.includes('supplement')) {
+                return "💊 Essential supplements to consider: Vitamin D (if low sun exposure), Omega-3 (if low fish intake), Protein powder (convenient protein source), Creatine (proven for strength/muscle). Always prioritize whole foods first! Consult a healthcare provider before starting any supplement regimen.";
+            } else {
+                return "I'm here to help with nutrition and fitness questions! Ask me about: protein intake, weight loss strategies, meal planning, hydration, muscle building, exercise recommendations, healthy foods, or specific nutrition topics. How can I assist you today?";
+            }
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Generate custom workout
+        function generateWorkout() {
+            const goal = document.getElementById('workoutGoal').value;
+            const duration = document.getElementById('workoutDuration').value;
+            const intensity = document.getElementById('workoutIntensity').value;
+
+            const workouts = {
+                "Weight Loss": [
+                    "5 min - Warm-up (jumping jacks, arm circles)",
+                    "10 min - High-intensity intervals (burpees, mountain climbers)",
+                    "8 min - Cardio (running in place, high knees)",
+                    "5 min - Core work (planks, bicycle crunches)",
+                    "2 min - Cool down (stretching)"
+                ],
+                "Muscle Building": [
+                    "5 min - Warm-up (light cardio, dynamic stretches)",
+                    "8 min - Upper body (push-ups, dips)",
+                    "8 min - Lower body (squats, lunges)",
+                    "6 min - Core (planks, leg raises)",
+                    "3 min - Cool down and stretching"
+                ],
+                "Endurance": [
+                    "5 min - Warm-up jog",
+                    "15 min - Steady-state cardio",
+                    "5 min - Interval sprints",
+                    "3 min - Core exercises",
+                    "2 min - Cool down"
+                ],
+                "Flexibility": [
+                    "5 min - Light movement warm-up",
+                    "10 min - Yoga flow",
+                    "10 min - Deep stretching",
+                    "5 min - Breathing exercises and meditation"
+                ],
+                "General Fitness": [
+                    "5 min - Warm-up",
+                    "8 min - Cardio mix",
+                    "8 min - Strength exercises",
+                    "6 min - Flexibility work",
+                    "3 min - Cool down"
+                ]
+            };
+
+            const planHTML = `
+                <div style="background: var(--dark-lighter); padding: 2rem; border-radius: 15px; border: 1px solid var(--border);">
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-family: 'Syne', sans-serif; font-size: 1.3rem;">
+                        Your Custom ${goal} Workout (${duration} min - ${intensity} Intensity)
+                    </h4>
+                    <ol style="padding-left: 1.5rem; line-height: 2;">
+                        ${workouts[goal].map(exercise => `<li>${exercise}</li>`).join('')}
+                    </ol>
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: var(--glass); border-radius: 10px; border: 1px solid var(--border);">
+                        <strong style="color: var(--primary);">💡 Pro Tips:</strong>
+                        <p style="margin-top: 0.5rem; color: var(--text-dim);">
+                            Stay hydrated throughout your workout. Focus on form over speed. 
+                            Listen to your body and adjust intensity as needed. 
+                            Don't forget to warm up and cool down properly!
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('customWorkoutPlan').innerHTML = planHTML;
+        }
+
+        // Smooth scrolling
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initializeDailyContent();
+        });
+    </script>
+</body>
+</html>
